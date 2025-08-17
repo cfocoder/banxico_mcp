@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "banxico-mcp-server"
+version = "1.1.0"
+description = "MCP server for Banxico (Bank of Mexico) economic data API"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "cfocoder", email = "your.email@example.com"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=2.0.0",
+    "httpx>=0.24.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/cfocoder/banxico_mcp"
+Repository = "https://github.com/cfocoder/banxico_mcp"
+Issues = "https://github.com/cfocoder/banxico_mcp/issues"
+
+[project.scripts]
+banxico-mcp-server = "banxico_mcp_server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.hatch.metadata]
+allow-direct-references = true

@@ -2,7 +2,31 @@
 
 This configuration works with the official Gemini CLI tool.
 
+## Method 1: Auto-Updates (Recommended)
+
 Update your Gemini CLI settings file (`~/.gemini/settings.json`):
+
+```json
+{
+  "mcpServers": {
+    "banxico": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/cfocoder/banxico_mcp",
+        "banxico-mcp-server"
+      ],
+      "env": {
+        "BANXICO_API_TOKEN": "your_token_here"
+      }
+    }
+  }
+}
+```
+
+**Benefits:** Automatically gets latest updates when you restart Gemini CLI.
+
+## Method 2: Local File
 
 ```json
 {
@@ -25,11 +49,11 @@ Update your Gemini CLI settings file (`~/.gemini/settings.json`):
 }
 ```
 
-## Setup Instructions
+## Setup Instructions (Method 2 only)
 
 1. **Download the server file**:
    ```bash
-   curl -O https://raw.githubusercontent.com/yourusername/banxico-mcp-server/main/banxico_mcp_server.py
+   curl -O https://raw.githubusercontent.com/cfocoder/banxico_mcp/main/banxico_mcp_server.py
    ```
 
 2. **Update your Gemini CLI settings file** (`~/.gemini/settings.json`) with the absolute path to the downloaded file.

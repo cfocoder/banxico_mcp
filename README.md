@@ -21,9 +21,30 @@ A Model Context Protocol (MCP) server for accessing the Bank of Mexico (Banxico)
 
 ## Installation Methods
 
-### Option 1: Using uvx (Recommended)
+### Option 1: Direct from GitHub (Auto-Updates) ⭐ **Recommended**
 
-The easiest way to run this server is using `uvx`, which automatically handles dependencies:
+This method automatically gets the latest updates when you restart your MCP client:
+
+**Configuration for MCP clients:**
+```json
+"banxico": {
+  "command": "uvx",
+  "args": [
+    "--from",
+    "git+https://github.com/cfocoder/banxico_mcp",
+    "banxico-mcp-server"
+  ],
+  "env": {
+    "BANXICO_API_TOKEN": "your_token_here"
+  }
+}
+```
+
+**No manual installation needed!** uvx will automatically download and run the latest version.
+
+### Option 2: Download Single File (Manual Updates)
+
+If you prefer to download the file locally:
 
 1. **Install uvx** (if not already installed):
    ```bash
@@ -32,20 +53,35 @@ The easiest way to run this server is using `uvx`, which automatically handles d
 
 2. **Download the server file**:
    ```bash
-   curl -O https://raw.githubusercontent.com/yourusername/banxico-mcp-server/main/banxico_mcp_server.py
+   curl -O https://raw.githubusercontent.com/cfocoder/banxico_mcp/main/banxico_mcp_server.py
    ```
 
-3. **Test the server**:
-   ```bash
-   BANXICO_API_TOKEN=your_token_here uvx --python 3.12 --from fastmcp --with httpx -- python banxico_mcp_server.py
+3. **Configuration for MCP clients:**
+   ```json
+   "banxico": {
+     "command": "uvx",
+     "args": [
+       "--python", "3.12",
+       "--from", "fastmcp",
+       "--with", "httpx",
+       "--",
+       "python",
+       "/absolute/path/to/banxico_mcp_server.py"
+     ],
+     "env": {
+       "BANXICO_API_TOKEN": "your_token_here"
+     }
+   }
    ```
 
-### Option 2: Traditional Installation
+   **To get updates:** Re-download the file when new features are added.
+
+### Option 3: Traditional Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/banxico-mcp-server.git
-   cd banxico-mcp-server
+   git clone https://github.com/cfocoder/banxico_mcp.git
+   cd banxico_mcp
    ```
 
 2. **Install dependencies**:

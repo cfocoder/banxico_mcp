@@ -599,3 +599,8 @@ async def get_unemployment_data(limit: Optional[int] = 24) -> str:
 if __name__ == "__main__":
     # Initialize and run the server
     mcp.run()
+
+
+def main():
+    """Entry point for package installation."""
+    mcp.run()
