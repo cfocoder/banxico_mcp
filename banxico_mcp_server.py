@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""
+Banxico MCP Server
+
+A Model Context Protocol (MCP) server for accessing the Bank of Mexico (Banxico) 
+SIE API to retrieve USD/MXN exchange rate data and other economic indicators.
+
+Author: Your Name
+License: MIT
+Repository: https://github.com/yourusername/banxico-mcp-server
+"""
+
+from typing import Any, Optional
+import httpx
+import logging
+import os
+
+# MCP and FastMCP imports
+try:
+    from fastmcp import FastMCP
+except ImportError:
+    print("Installing required dependencies...")
+    import subprocess
+    import sys
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "fastmcp", "httpx"])
+    from fastmcp import FastMCP
+
+# Initialize FastMCP server
+mcp = FastMCP("banxico")
+
+# Constants
+BANXICO_API_BASE = "https://www.banxico.org.mx/SieAPIRest/service/v1"
+USER_AGENT = "banxico-mcp/1.0"
+
+# Get API token from environment variable
+BANXICO_TOKEN = os.getenv("BANXICO_API_TOKEN")
+
+# Configure logging to stderr (not stdout for STDIO servers)
+logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler()])
+logger = logging.getLogger(__name__)
+
+
+async def make_banxico_request(endpoint: str, token: str) -> dict[str, Any] | None:
+    """
+    Make a request to the Banxico SIE API with proper error handling.
+    
+    Args:
+        endpoint: The API endpoint to call (without base URL)
+        token: The Banxico API token
+        
+    Returns:
+        JSON response data or None if request failed
+    """
+    url = f"{BANXICO_API_BASE}/{endpoint}"
+    headers = {"User-Agent": USER_AGENT}
+    params = {"token": token}
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers, params=params, timeout=30.0)
+            response.raise_for_status()
+            return response.json()
+    except httpx.HTTPError as e:
+        logger.error(f"HTTP error occurred: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        return None
+
+
+def format_exchange_rate_data(data: dict[str, Any]) -> str:
+    """
+    Format exchange rate data into a readable string.
+    
+    Args:
+        data: Raw JSON response from Banxico API
+        
+    Returns:
+        Formatted string with exchange rate information
+    """
+    if not data or "bmx" not in data:
+        return "No data available"
+    
+    series_list = data["bmx"].get("series", [])
+    if not series_list:
+        return "No series data found"
+    
+    result = []
+    for series in series_list:
+        series_title = series.get("titulo", "Unknown Series")
+        series_id = series.get("idSerie", "Unknown ID")
+        result.append(f"Series: {series_title} (ID: {series_id})")
+        
+        datos = series.get("datos", [])
+        if not datos:
+            result.append("  No data points available")
+        else:
+            result.append(f"  Total data points: {len(datos)}")
+            # Show first few and last few data points
+            if len(datos) <= 10:
+                for dato in datos:
+                    fecha = dato.get("fecha", "Unknown date")
+                    valor = dato.get("dato", "N/A")
+                    result.append(f"  {fecha}: {valor}")
+            else:
+                # Show first 5
+                for i, dato in enumerate(datos[:5]):
+                    fecha = dato.get("fecha", "Unknown date")
+                    valor = dato.get("dato", "N/A")
+                    result.append(f"  {fecha}: {valor}")
+                
+                result.append(f"  ... ({len(datos) - 10} more data points) ...")
+                
+                # Show last 5
+                for dato in datos[-5:]:
+                    fecha = dato.get("fecha", "Unknown date")
+                    valor = dato.get("dato", "N/A")
+                    result.append(f"  {fecha}: {valor}")
+        
+        result.append("")  # Empty line between series
+    
+    return "\n".join(result)
+
+
+@mcp.tool()
+async def get_latest_usd_mxn_rate() -> str:
+    """
+    Get the latest USD/MXN exchange rate from Banxico.
+        
+    Returns:
+        The most recent USD/MXN exchange rate with date
+    """
+    if not BANXICO_TOKEN:
+        return "Error: BANXICO_API_TOKEN environment variable not set. Please configure your API token."
+    
+    endpoint = "series/SF63528/datos/oportuno"
+    data = await make_banxico_request(endpoint, BANXICO_TOKEN)
+    
+    if not data:
+        return "Failed to retrieve exchange rate data. Please check your API token and network connection."
+    
+    return format_exchange_rate_data(data)
+
+
+@mcp.tool()
+async def get_usd_mxn_historical_data(limit: Optional[int] = 30) -> str:
+    """
+    Get historical USD/MXN exchange rate data from Banxico.
+    
+    Args:
+        limit: Maximum number of recent data points to return (default: 30)
+        
+    Returns:
+        Historical USD/MXN exchange rate data
+    """
+    if not BANXICO_TOKEN:
+        return "Error: BANXICO_API_TOKEN environment variable not set. Please configure your API token."
+    
+    endpoint = "series/SF63528/datos"
+    data = await make_banxico_request(endpoint, BANXICO_TOKEN)
+    
+    if not data:
+        return "Failed to retrieve historical exchange rate data. Please check your API token and network connection."
+    
+    # If limit is specified, truncate the data
+    if limit and data.get("bmx", {}).get("series"):
+        for series in data["bmx"]["series"]:
+            if "datos" in series and len(series["datos"]) > limit:
+                # Keep the most recent data points
+                series["datos"] = series["datos"][-limit:]
+    
+    return format_exchange_rate_data(data)
+
+
+@mcp.tool()
+async def get_series_metadata(series_id: str = "SF63528") -> str:
+    """
+    Get metadata for a Banxico series.
+    
+    Args:
+        series_id: The series ID to get metadata for (default: SF63528 for USD/MXN)
+        
+    Returns:
+        Series metadata including title, description, and date range
+    """
+    if not BANXICO_TOKEN:
+        return "Error: BANXICO_API_TOKEN environment variable not set. Please configure your API token."
+    
+    endpoint = f"series/{series_id}"
+    data = await make_banxico_request(endpoint, BANXICO_TOKEN)
+    
+    if not data:
+        return f"Failed to retrieve metadata for series {series_id}. Please check your API token and network connection."
+    
+    if "bmx" not in data or "series" not in data["bmx"]:
+        return "No series metadata found"
+    
+    result = []
+    for series in data["bmx"]["series"]:
+        title = series.get("titulo", "Unknown title")
+        series_id = series.get("idSerie", "Unknown ID")
+        fecha_inicio = series.get("fechaInicio", "Unknown")
+        fecha_fin = series.get("fechaFin", "Unknown")
+        periodicidad = series.get("periodicidad", "Unknown")
+        cifra = series.get("cifra", "Unknown")
+        unidad = series.get("unidad", "Unknown")
+        
+        result.append(f"Series ID: {series_id}")
+        result.append(f"Title: {title}")
+        result.append(f"Start Date: {fecha_inicio}")
+        result.append(f"End Date: {fecha_fin}")
+        result.append(f"Frequency: {periodicidad}")
+        result.append(f"Type: {cifra}")
+        result.append(f"Unit: {unidad}")
+        result.append("")
+    
+    return "\n".join(result)
+
+
+@mcp.tool()
+async def get_date_range_data(start_date: str, end_date: str, series_id: str = "SF63528") -> str:
+    """
+    Get exchange rate data for a specific date range.
+    
+    Args:
+        start_date: Start date in YYYY-MM-DD format
+        end_date: End date in YYYY-MM-DD format
+        series_id: The series ID (default: SF63528 for USD/MXN)
+        
+    Returns:
+        Exchange rate data for the specified date range
+    """
+    if not BANXICO_TOKEN:
+        return "Error: BANXICO_API_TOKEN environment variable not set. Please configure your API token."
+    
+    endpoint = f"series/{series_id}/datos/{start_date}/{end_date}"
+    data = await make_banxico_request(endpoint, BANXICO_TOKEN)
+    
+    if not data:
+        return f"Failed to retrieve data for {series_id} from {start_date} to {end_date}. Please check your API token and network connection."
+    
+    return format_exchange_rate_data(data)
+
+
+if __name__ == "__main__":
+    # Initialize and run the server
+    mcp.run()
