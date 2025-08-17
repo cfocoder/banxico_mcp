@@ -18,10 +18,12 @@ Update your Continue config file (`~/.continue/config.json`):
     "banxico": {
       "command": "uvx",
       "args": [
-        "run",
-        "--from", 
-        "git+https://github.com/yourusername/banxico-mcp-server",
-        "banxico_mcp_server"
+        "--python", "3.12",
+        "--from", "fastmcp",
+        "--with", "httpx",
+        "--",
+        "python",
+        "/absolute/path/to/banxico_mcp_server.py"
       ],
       "env": {
         "BANXICO_API_TOKEN": "your_token_here"
@@ -30,6 +32,15 @@ Update your Continue config file (`~/.continue/config.json`):
   }
 }
 ```
+
+## Setup Instructions
+
+1. **Download the server file**:
+   ```bash
+   curl -O https://raw.githubusercontent.com/yourusername/banxico-mcp-server/main/banxico_mcp_server.py
+   ```
+
+2. **Update the config file** with the absolute path to the downloaded file.
 
 ## Environment Setup
 

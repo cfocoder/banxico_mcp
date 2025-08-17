@@ -10,10 +10,12 @@ Update your Gemini CLI settings file (`~/.gemini/settings.json`):
     "banxico": {
       "command": "uvx",
       "args": [
-        "run",
-        "--from",
-        "git+https://github.com/yourusername/banxico-mcp-server", 
-        "banxico_mcp_server"
+        "--python", "3.12",
+        "--from", "fastmcp",
+        "--with", "httpx",
+        "--",
+        "python",
+        "/absolute/path/to/banxico_mcp_server.py"
       ],
       "env": {
         "BANXICO_API_TOKEN": "your_token_here"
@@ -22,6 +24,15 @@ Update your Gemini CLI settings file (`~/.gemini/settings.json`):
   }
 }
 ```
+
+## Setup Instructions
+
+1. **Download the server file**:
+   ```bash
+   curl -O https://raw.githubusercontent.com/yourusername/banxico-mcp-server/main/banxico_mcp_server.py
+   ```
+
+2. **Update your Gemini CLI settings file** (`~/.gemini/settings.json`) with the absolute path to the downloaded file.
 
 ## Environment Setup
 

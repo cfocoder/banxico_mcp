@@ -154,8 +154,15 @@ banxico-mcp-server/
 ├── banxico_mcp_server.py    # Main server file
 ├── README.md                # This file
 ├── LICENSE                  # MIT License
-├── examples/                # Configuration examples
-└── docs/                    # Additional documentation
+├── CONTRIBUTING.md          # Development guidelines
+└── docs/                    # Documentation and examples
+    ├── EXTENDING.md         # Guide for adding new endpoints
+    └── examples/            # Configuration examples
+        ├── claude-desktop.md
+        ├── continue.md
+        ├── env-template.md
+        ├── gemini-cli.md
+        └── vscode-cline.md
 ```
 
 ### Testing
