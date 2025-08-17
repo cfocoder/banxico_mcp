@@ -126,24 +126,63 @@ Add to `~/.gemini/settings.json`:
 | `get_usd_mxn_historical_data(limit)` | Get historical exchange rate data | `limit`: Max data points (default: 30) |
 | `get_series_metadata(series_id)` | Get metadata for a data series | `series_id`: Series ID (default: SF63528) |
 | `get_date_range_data(start_date, end_date, series_id)` | Get data for specific date range | `start_date`, `end_date`: YYYY-MM-DD format |
+| `get_inflation_data(inflation_type, limit)` | Get inflation data | `inflation_type`: 'monthly', 'accumulated', 'annual' (default: 'monthly')<br>`limit`: Max data points (default: 12) |
+| `get_udis_data(limit)` | Get UDIS (Investment Units) values | `limit`: Max data points (default: 30) |
+| `get_cetes_28_data(limit)` | Get CETES 28-day interest rates | `limit`: Max data points (default: 30) |
+| `get_banxico_reserves_data(limit)` | Get Banxico Reserve Assets data | `limit`: Max data points (default: 30) |
+| `get_unemployment_data(limit)` | Get unemployment rate data | `limit`: Max data points (default: 24) |
 
 ## Usage Examples
 
 Once configured with your MCP client, you can ask:
 
+**Exchange Rates:**
 - "What's the current USD to MXN exchange rate?"
 - "Show me the USD/MXN exchange rate for the last 10 days"
 - "Get the exchange rate data from 2024-01-01 to 2024-01-31"
 - "What's the metadata for the USD/MXN series?"
 
+**Inflation Data:**
+- "What's the current monthly inflation rate in Mexico?"
+- "Show me the annual inflation data for the last year"
+- "Get the accumulated inflation for the last 6 months"
+
+**Interest Rates:**
+- "What are the current CETES 28-day rates?"
+- "Show me the CETES rates for the last month"
+
+**Financial Indicators:**
+- "What are the current UDIS values?"
+- "Show me Banxico's reserve assets"
+- "Get the latest financial indicators from Banxico"
+
+**Labor Market:**
+- "What's the current unemployment rate in Mexico?"
+- "Show me unemployment trends for the last year"
+- "How has unemployment changed over the last 2 years?"
+
 ## API Reference
 
 The server uses the [Banxico SIE API](https://www.banxico.org.mx/SieAPIRest/service/v1/doc/ejemplos) with the following endpoints:
 
+**Exchange Rates:**
 - **Latest Data**: `/series/SF63528/datos/oportuno`
 - **Historical Data**: `/series/SF63528/datos`
 - **Series Metadata**: `/series/SF63528`
 - **Date Range**: `/series/SF63528/datos/{start_date}/{end_date}`
+
+**Inflation Data:**
+- **Monthly Inflation**: `/series/SP30577/datos` 
+- **Accumulated Inflation**: `/series/SP30579/datos`
+- **Annual Inflation**: `/series/SP30578/datos`
+
+**Financial Indicators:**
+- **UDIS**: `/series/SP68257/datos`
+- **CETES 28-day**: `/series/SF282/datos`
+- **Banxico Reserves**: `/series/SF308843/datos`
+
+**Labor Market:**
+- **Unemployment Rate**: `/series/SL1/datos`
 
 ## Development
 
