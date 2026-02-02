@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server for accessing the Bank of Mexico (Banxico) SIE API to retrieve USD/MXN exchange rate data and other economic indicators.
 
+<a href="https://glama.ai/mcp/servers/@cfocoder/banxico_mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@cfocoder/banxico_mcp/badge" alt="Banxico Server MCP server" />
+</a>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
