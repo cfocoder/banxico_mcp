@@ -138,55 +138,9 @@ The Docker image will build automatically with production-ready features includi
 
 ### Configure MCP Clients
 
-#### Claude Desktop
+The server works with any MCP-compatible client. Use **Option 1** from "Installation Methods" above (auto-updates from GitHub) for the easiest setup.
 
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "banxico": {
-      "command": "uvx",
-      "args": [
-        "--python", "3.12",
-        "--from", "fastmcp",
-        "--with", "httpx",
-        "--",
-        "python",
-        "/absolute/path/to/banxico_mcp_server.py"
-      ],
-      "env": {
-        "BANXICO_API_TOKEN": "your_banxico_token_here"
-      }
-    }
-  }
-}
-```
-
-#### Gemini CLI
-
-Add to `~/.gemini/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "banxico": {
-      "command": "uvx",
-      "args": [
-        "--python", "3.12",
-        "--from", "fastmcp",
-        "--with", "httpx",
-        "--",
-        "python",
-        "/absolute/path/to/banxico_mcp_server.py"
-      ],
-      "env": {
-        "BANXICO_API_TOKEN": "your_banxico_token_here"
-      }
-    }
-  }
-}
-```
+For local configuration, use the uvx commands shown in Installation Methods and substitute your Banxico API token in the `env` section.
 
 ## Available Tools
 
@@ -260,18 +214,17 @@ The server uses the [Banxico SIE API](https://www.banxico.org.mx/SieAPIRest/serv
 
 ```
 banxico-mcp-server/
-├── banxico_mcp_server.py    # Main server file
-├── README.md                # This file
-├── LICENSE                  # MIT License
-├── CONTRIBUTING.md          # Development guidelines
-└── docs/                    # Documentation and examples
-    ├── EXTENDING.md         # Guide for adding new endpoints
-    └── examples/            # Configuration examples
-        ├── claude-desktop.md
-        ├── continue.md
-        ├── env-template.md
-        ├── gemini-cli.md
-        └── vscode-cline.md
+├── Dockerfile               # Production Docker image
+├── docker-compose.yml       # Local testing with Docker
+├── .dockerignore           # Docker build optimization
+├── .env.example            # Environment template
+├── banxico_mcp_server.py   # Main MCP server
+├── pyproject.toml          # Package configuration
+├── README.md               # This file
+├── LICENSE                 # MIT License
+├── CONTRIBUTING.md         # Development guidelines
+└── docs/
+    └── EXTENDING.md        # Guide for adding new endpoints
 ```
 
 ### Testing

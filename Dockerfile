@@ -8,8 +8,7 @@ RUN useradd -m -u 1000 mcp && \
 
 # Install dependencies
 COPY pyproject.toml .
-RUN pip install --no-cache-dir -e . && \
-    pip install --no-cache-dir gunicorn
+RUN pip install --no-cache-dir -e .
 
 # Copy application
 COPY --chown=mcp:mcp banxico_mcp_server.py .
