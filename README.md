@@ -96,6 +96,24 @@ If you prefer to download the file locally:
 
 ## Deployment with Docker/Coolify
 
+### Deploy as HTTP MCP Server (Coolify, Docker, Cloud)
+
+This MCP server can run as a persistent HTTP service:
+
+```bash
+docker run -p 3333:3333 \
+  -e BANXICO_API_TOKEN=xxx \
+  -e MCP_PORT=3333 \
+  cfocoder/banxico_mcp
+```
+
+**Key points:**
+- ✅ **Not just uvx** - Can run as a long-lived service
+- ✅ **HTTP endpoint** - `/health` available for monitoring
+- ✅ **Configurable port** - Set via `MCP_PORT` environment variable
+- ✅ **Graceful shutdown** - Responds to SIGTERM signals
+- ✅ **Perfect for Coolify** - Simple Docker deployment
+
 ### Quick Start with Docker Compose (Local Testing)
 
 1. **Clone and setup:**
