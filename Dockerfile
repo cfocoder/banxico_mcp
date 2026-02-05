@@ -10,14 +10,15 @@ RUN useradd -m -u 1000 mcp && \
 COPY pyproject.toml README.md .
 RUN pip install --no-cache-dir -e .
 
-# Copy application
+# Copy application and healthcheck script
 COPY --chown=mcp:mcp banxico_mcp_server.py .
+COPY --chown=mcp:mcp healthcheck.py .
 
 USER mcp
 
-# Health check
+# Health check - verify server is listening on configured port
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import httpx; httpx.get('http://localhost:${MCP_PORT:-8000}/health', timeout=5)" || exit 1
+    CMD python healthcheck.py
 
 # Environment variables
 ENV PYTHONUNBUFFERED=1
