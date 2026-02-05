@@ -7,7 +7,7 @@ RUN useradd -m -u 1000 mcp && \
     chown -R mcp:mcp /app
 
 # Install dependencies
-COPY pyproject.toml .
+COPY pyproject.toml README.md .
 RUN pip install --no-cache-dir -e .
 
 # Copy application
