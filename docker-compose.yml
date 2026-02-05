@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  banxico-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: banxico-mcp-server
+    ports:
+      - "${MCP_PORT:-8000}:${MCP_PORT:-8000}"
+    environment:
+      - BANXICO_API_TOKEN=${BANXICO_API_TOKEN}
+      - MCP_PORT=${MCP_PORT:-8000}
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:${MCP_PORT:-8000}/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - banxico-network
+
+networks:
+  banxico-network:
+    driver: bridge
