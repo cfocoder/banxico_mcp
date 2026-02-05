@@ -14,6 +14,7 @@ from typing import Any, Optional
 import httpx
 import logging
 import os
+import signal
 
 # MCP and FastMCP imports
 try:
@@ -35,9 +36,23 @@ USER_AGENT = "banxico-mcp/1.0"
 # Get API token from environment variable
 BANXICO_TOKEN = os.getenv("BANXICO_API_TOKEN")
 
+# Get port from environment
+MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+
 # Configure logging to stderr (not stdout for STDIO servers)
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler()])
 logger = logging.getLogger(__name__)
+
+
+# Health check endpoint for container orchestration
+@mcp.tool()
+async def health_check():
+    """Health check endpoint for container monitoring.
+
+    Returns:
+        dict: Status information
+    """
+    return {"status": "healthy"}
 
 
 async def make_banxico_request(endpoint: str, token: str) -> dict[str, Any] | None:
@@ -594,6 +609,16 @@ async def get_unemployment_data(limit: Optional[int] = 24) -> str:
                 series["datos"] = series["datos"][-limit:]
     
     return format_unemployment_data(data)
+
+
+# Graceful shutdown handler
+def signal_handler(sig, frame):
+    """Handle shutdown signals gracefully."""
+    logger.info("Shutdown signal received, exiting...")
+    exit(0)
+
+signal.signal(signal.SIGTERM, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
