@@ -24,8 +24,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 ENV PYTHONUNBUFFERED=1
 ENV MCP_PORT=8000
 
-# Expose port
-EXPOSE ${MCP_PORT}
+# Expose port (default, will be overridden by env var at runtime)
+EXPOSE 8000
 
-# Run server
+# Run server with HTTP transport
 CMD ["python", "banxico_mcp_server.py"]

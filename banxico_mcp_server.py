@@ -622,10 +622,26 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
-    # Initialize and run the server
-    mcp.run()
+    # Run with uvicorn for HTTP server
+    import uvicorn
+    
+    host = "0.0.0.0"
+    port = MCP_PORT
+    
+    logger.info(f"Starting Banxico MCP server on {host}:{port}")
+    
+    # Create and run the Starlette app from FastMCP
+    app = mcp.app
+    uvicorn.run(app, host=host, port=port, log_level="info")
 
 
 def main():
     """Entry point for package installation."""
-    mcp.run()
+    import uvicorn
+    
+    host = "0.0.0.0"
+    port = MCP_PORT
+    
+    logger.info(f"Starting Banxico MCP server on {host}:{port}")
+    app = mcp.app
+    uvicorn.run(app, host=host, port=port, log_level="info")
