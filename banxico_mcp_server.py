@@ -622,28 +622,14 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
-    # Run with uvicorn for HTTP server
-    import uvicorn
-    
-    host = "0.0.0.0"
-    port = MCP_PORT
-    
-    logger.info(f"Starting Banxico MCP server on {host}:{port}")
-    
-    # Get the ASGI app from FastMCP and run with uvicorn
-    app = mcp.asgi()
-    uvicorn.run(app, host=host, port=port, log_level="info")
+    # Run FastMCP server with HTTP transport (uvicorn)
+    logger.info(f"Starting Banxico MCP server on 0.0.0.0:{MCP_PORT}")
+    mcp.run(server="uvicorn", host="0.0.0.0", port=MCP_PORT)
 
 
 def main():
     """Entry point for package installation."""
-    import uvicorn
-    
-    host = "0.0.0.0"
-    port = MCP_PORT
-    
-    logger.info(f"Starting Banxico MCP server on {host}:{port}")
-    app = mcp.asgi()
-    uvicorn.run(app, host=host, port=port, log_level="info")
+    logger.info(f"Starting Banxico MCP server on 0.0.0.0:{MCP_PORT}")
+    mcp.run(server="uvicorn", host="0.0.0.0", port=MCP_PORT)
 
 
