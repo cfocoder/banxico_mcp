@@ -622,14 +622,14 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
-    # Run FastMCP server with HTTP transport (uvicorn)
+    # Run FastMCP server with HTTP transport
     logger.info(f"Starting Banxico MCP server on 0.0.0.0:{MCP_PORT}")
-    mcp.run(server="uvicorn", host="0.0.0.0", port=MCP_PORT)
+    mcp.run(transport="http", host="0.0.0.0", port=MCP_PORT)
 
 
 def main():
     """Entry point for package installation."""
     logger.info(f"Starting Banxico MCP server on 0.0.0.0:{MCP_PORT}")
-    mcp.run(server="uvicorn", host="0.0.0.0", port=MCP_PORT)
+    mcp.run(transport="http", host="0.0.0.0", port=MCP_PORT)
 
 
