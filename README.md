@@ -94,6 +94,40 @@ If you prefer to download the file locally:
    BANXICO_API_TOKEN=your_token_here python banxico_mcp_server.py
    ```
 
+## Deployment with Docker/Coolify
+
+### Quick Start with Docker Compose (Local Testing)
+
+1. **Clone and setup:**
+   ```bash
+   git clone https://github.com/cfocoder/banxico_mcp.git
+   cd banxico_mcp
+   cp .env.example .env
+   # Edit .env with your BANXICO_API_TOKEN and desired MCP_PORT
+   ```
+
+2. **Run with Docker Compose:**
+   ```bash
+   docker-compose up
+   ```
+
+3. **Test the server:**
+   ```bash
+   curl http://localhost:8000/health
+   ```
+
+### Deployment in Coolify (Oracle Cloud)
+
+1. **Push to GitHub** - Coolify will pull from your repository
+2. **Create new Docker service in Coolify** - Select "Docker" type
+3. **Configure environment variables:**
+   - `BANXICO_API_TOKEN`: Your Banxico API token
+   - `MCP_PORT`: Port number (default: 8000, change to avoid conflicts)
+4. **Expose port** - Configure port mapping in Coolify dashboard
+5. **Health checks** - Coolify will automatically use the `/health` endpoint
+
+The Docker image will build automatically with production-ready features including health checks, non-root user, and graceful shutdown handling.
+
 ## Configuration
 
 ### Get Your Banxico API Token
