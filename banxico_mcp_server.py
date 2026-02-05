@@ -630,8 +630,8 @@ if __name__ == "__main__":
     
     logger.info(f"Starting Banxico MCP server on {host}:{port}")
     
-    # Create and run the Starlette app from FastMCP
-    app = mcp.app
+    # Get the ASGI app from FastMCP and run with uvicorn
+    app = mcp.asgi()
     uvicorn.run(app, host=host, port=port, log_level="info")
 
 
@@ -643,5 +643,5 @@ def main():
     port = MCP_PORT
     
     logger.info(f"Starting Banxico MCP server on {host}:{port}")
-    app = mcp.app
+    app = mcp.asgi()
     uvicorn.run(app, host=host, port=port, log_level="info")
