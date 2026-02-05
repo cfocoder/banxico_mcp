@@ -645,3 +645,5 @@ def main():
     logger.info(f"Starting Banxico MCP server on {host}:{port}")
     app = mcp.asgi()
     uvicorn.run(app, host=host, port=port, log_level="info")
+
+
